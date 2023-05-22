@@ -1,9 +1,12 @@
-name: Docker image release
+name: Build image
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - "main"
 
 jobs:
-  buildx-dockerhub:
+  buildx:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,9 +41,9 @@ jobs:
           string: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
-          context: .
+          context: app
           platforms: linux/amd64,linux/arm64,linux/arm/v7,linux/386
           push: true
           tags: ${{ steps.string.outputs.lowercase }}:latest
